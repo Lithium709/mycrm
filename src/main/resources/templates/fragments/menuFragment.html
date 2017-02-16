@@ -1,0 +1,13 @@
+<html>
+    <section layout:fragment="menu">
+        <ul>
+             <li  th:each="menuItem : ${menuItemsList}" th:class="${#lists.isEmpty(menuItem.children)?'list-group-item':'list-group'}">
+       			 <a href="#" th:onclick="'filter(\'' + ${menuItem.id} + '\');return false;'"><span  th:text="${menuItem.name}">prototype text...</span></a>
+        		<section layout:include="@{fragments/menuFragment} :: menu" th:with="menuItemsList=${menuItem.children}"></section>
+        		</div>
+   			 </li>
+        </ul> 
+    </section>
+</html>
+
+

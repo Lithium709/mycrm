@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"></meta>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>Orders</title>
+</head>
+<body>
+	<a href="/">Назад</a></body>
+	<table class="table">
+		<tr>
+			<th>Open</th><th>Дата</th><th>Номер</th><th>Контрагент</th><th>Сумма</th>
+		</tr>
+		<tr th:each="order : ${orders}">
+		    <td>  <a th:href="@{/order(id=${order.id})}">open</a><td>
+			<td th:text="${#dates.format(order.date, 'dd.MM.yyyy hh:mm:ss')}"></td>
+			<td th:text="${order.number}">ТД-00004910</td>
+			<td th:text="${order.buyer.name}">Суматра Киев</td>
+			<td th:text="${#numbers.formatDecimal(#aggregates.sum(order.orderLines.![total]) + #aggregates.sum(order.orderLines.![vat]),0,2) }">1500</td>
+		</tr>	
+	</table>
+</html>

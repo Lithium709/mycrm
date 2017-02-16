@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"></meta>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>Контрагенти</title>
+</head>
+<body>
+	<a href="/">Back</a>
+	<table class="table">
+		<tr>
+			<th>Назва</th>
+		</tr>
+		<tr th:each="contractor : ${contractors}">
+			<td th:text="${contractor.name}"></td>
+		</tr>
+	</table>
+</body>
+</html>

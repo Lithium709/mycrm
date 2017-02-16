@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"></meta>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>Orders</title>
+</head>
+<body>
+	<a href="/">Назад</a></body>
+	
+	<!--Шапка -->
+	<table class="table">
+	    <tr>
+			<th>Дата</th><th>Номер</th><th>Контрагент</th><th>Сума ПДВ</th> <th>Сума</th>
+		</tr>
+		<tr>
+			<td th:text="${#dates.format(order.date, 'dd.MM.yyyy hh:mm:ss')}">09.02.2017 15:12:34</td>
+			<td th:text="${order.number}">ТД-00004910</td>
+			<td th:text="${order.buyer.name}">Суматра Киев</td>
+			<td th:text="${#numbers.formatDecimal(#aggregates.sum(order.orderLines.![vat]),0,2) }">300</td>
+			<td th:text="${#numbers.formatDecimal(#aggregates.sum(order.orderLines.![total]) + #aggregates.sum(order.orderLines.![vat]),0,2) }">1500</td>
+		<tr>
+	</table>
+	<div>
+		<div>
+			
+		</div>
+		<!--ТЧ -->
+		<div>
+		<div>
+			<button class="button">insert line</button>
+		</div>
+		<table class="table">
+			<tr>
+				<th>Номер рядка</th>
+				<th>Артикул</th>
+				<th>Номенклатура</th>
+				<th>Кількість</th>
+				<th>Ціна</th>
+				<th>Сума ПДВ</th>
+				<th>Всього без ПДВ</th>
+				<th>Всього з ПДВ</th>
+			</tr>
+			<tr th:each="orderLine : ${order.orderLines}">
+				<td th:text="${orderLine.lineNo}">1</td>
+				<td th:text="${orderLine.product.productNumber}">401701</td>
+				<td th:text="${orderLine.product.name}">Склянка д/реактивов 1-2- 1000 мл. (шир.горло,  янтар. стекло)  (И)</td>
+				<td th:text="${#numbers.formatDecimal(orderLine.quantity,0,3)}">100,000</td>
+				<td th:text="${#numbers.formatDecimal(orderLine.price,0,2)}">15,54</td>
+				<td th:text="${#numbers.formatDecimal(orderLine.vat,0,2)}">1,87</td>
+				<td th:text="${#numbers.formatDecimal(orderLine.total,0,2)}">1223,87</td>
+				<td th:text="${#numbers.formatDecimal(orderLine.total+ orderLine.vat,0,2)}">1512,87</td>
+			</tr>	
+		</table>
+		</div>
+	</div>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html ng-app="products">
+<head>
+<meta charset="UTF-8"></meta>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>Продукція</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-route.js"></script>
+<script src="/js/CollapsibleLists.compressed.js"></script>
+
+<script th:inline="javascript">
+angular.module('products', [])
+.controller('ProductsController', ['$scope','$http', function($scope,$http) {
+	 
+	$scope.size=50;
+	$scope.productNumberSortOrder = false;
+	$scope.nameSortOrder = false;
+	$scope.productNumber = "";
+	$scope.name = "";
+	$scope.newUrl = function(){
+		return "/api/products/search?size=50&productNumber=" + $scope.productNumber + "&name=" + $scope.name;
+	};
+	
+	$scope.sortUrl = function(fieldName, field){
+		return "/api/products/search?size=50&sort=" + field + ","+($scope[fieldName]?'asc':'desc') + "&productNumber=" + $scope.productNumber + "&name=" + $scope.name;
+	};
+	$scope.products =  [
+	  		                [# th:each="item : ${products}"  ]
+			                    { 
+			                 	 id: "[# th:utext="${item.id}" /]",
+			                 	 productNumber: "[# th:utext="${item.productNumber}" /]",
+			                 	 name: '[# th:utext="${item.name}" /]',
+			                     parent: { name: '[# th:utext="${item.parent!=null?item.parent.name:''}" /]'}
+			                    },
+			                 [/]
+				];	      
+	
+     $scope.filterOnChange = function() {
+    	$http.get($scope.newUrl())
+    	.then(response => {
+    		$scope.products = response.data.content;
+			;});
+    	
+     }
+     $scope.sortBy = function(fieldName, field) {
+    	
+    	$scope[fieldName] = !$scope[fieldName];
+    	$http.get($scope.sortUrl(fieldName, field))
+    	.then(response => {
+    		$scope.products = response.data.content;
+		})   	
+
+      };
+}]);
+
+/*
+		var nodes =  [
+		                [# th:each="item : ${groups}"  ]
+	                    { 
+	                 	 id: "[# th:utext="${item.id}" /]",
+	                 	 name: '[# th:utext="${item.name}" /]',
+	                   	 level: [# th:utext="${item.level}" /],
+	                   	 parent_id: "[# th:utext="${item.parent_id==null?0:item.parent_id}" /]"
+	                 [/]
+	      ]; 
+	      
+    	var map = {}, node, roots = [];
+    	for (var i = 0; i < nodes.length; i += 1) {
+    	    node = nodes[i];
+    	    node.children = [];
+    	    map[node.id] = i; // use map to look-up the parents
+    	    if (node.parent_id !== "0") {
+    	        nodes[map[node.parent_id]].children.push(node);
+    	    } else {
+    	        roots.push(node);
+    	    }
+    	}
+    	console.log(roots);	      
+
+  */
+  function filter(id){
+	  
+  }
+  
+  window.onload = function(e){ 
+	  
+	  CollapsibleLists.apply();
+	  
+	}                    
+</script>
+</head>
+<body>
+	<a href="/">Назад</a>
+	<ul class="collapsibleList">
+		<li>
+			<div layout:include="@{fragments/menuFragment} :: menu" th:with="menuItemsList=${groups}"></div>
+		</li>
+	</ul>
+	<div ng-controller="ProductsController">
+		<form>
+			<div class="form-group">
+			    <label for="productNumber">Артикул</label>
+			    <input type="text" class="form-control" id="productNumber" ng-model = "productNumber" ng-change="filterOnChange()" aria-describedby="productNumber" placeholder="пошук по артикулу">
+			    <small id="productNumberHelp" class="form-text text-muted">застосуйте фільт для швидкого пошуку по артикулу</small>
+	  		</div>	
+	  		<div class="form-group">
+			    <label for="name">Найменування</label>
+			    <input type="text" class="form-control" id="name" ng-model = "name" ng-change="filterOnChange()" aria-describedby="name" placeholder="пошук по імені">
+			    <small id="nameHelp" class="form-text text-muted">застосуйте фільт для швидкого пошуку по імені</small>
+	  		</div>	
+	  		
+		</form>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<th ng-click="sortBy('productNumberSortOrder','productNumber')">Артикул</th><th ng-click="sortBy('nameSortOrder', 'name')">Найменування</th><th>Група</th>
+			</tr>
+			<tr ng-repeat="product in products">
+				<td>{{product.productNumber}}</td>
+				<td>{{product.name}}</td>
+				<td>{{product.parent.name}}</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
